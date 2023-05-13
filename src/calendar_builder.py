@@ -14,8 +14,8 @@ from sqlalchemy import text
 
 from database_filling import connect_sqlalc
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-CALENDAR_DIR = 'calendars'
+ROOT_DIR = os.path.dirname("/home/igarden/website/")
+CALENDAR_DIR =  'calendars_jsons'
 
 
 def find_best_date(weather: pd.DataFrame, good_temp: Dict[str, Dict[str, float]], culture: str) -> datetime:
@@ -133,8 +133,10 @@ if __name__ == '__main__':
         'features_technical',
         engine.connect()
     )
-    # print(builder.create_calendar(culture, sort, city))
+    print(builder.create_calendar(culture, sort, city))
     # print(builder.create_calendar('Томат', 'Томат Ранний красный', 'Брест'))
     # print(builder.create_calendar('Томат', 'Томат Брутус', 'Белые Столбы'))
+    # print(builder.create_calendar('Арбуз', 'Арбуз Белые росы', 'Белые Столбы'))
+    # 'Арбуз' 'Арбуз Белые росы' 'Белые Столбы'
     # 'Томат' 'Томат Ранний красный' 'Брест'
     # for debug
