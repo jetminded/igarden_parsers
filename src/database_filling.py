@@ -10,7 +10,7 @@ creds = json.load(open('creds.json', 'r'))
 
 def connect_sqlalc():
     try:
-        print('Connecting to the PostgreSQL Database...')
+        # print('Connecting to the PostgreSQL Database...')
 
         ssh_tunnel = SSHTunnelForwarder(
             creds["SSH_HOST"],
@@ -50,8 +50,8 @@ def run():
     path_to_weather = 'city_x_weatherCity.csv'
     with engine.connect() as conn:
         # for filename in os.listdir(path_to_weather):
-            df = pd.read_csv(path_to_weather)
-            df.to_sql('city_x_weather', con=conn, if_exists='append', index=True)
+            df = pd.read_csv(path_to_weather, names=['index', 'city', 'weather']) .drop(columns=['index'])
+            df.to_sql('city_x_weather', con=conn, if_exists='replace', index=True)
             conn.commit()
             # print(filename)
 
