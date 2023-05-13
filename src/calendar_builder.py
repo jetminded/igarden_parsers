@@ -22,7 +22,7 @@ def find_best_date(weather: pd.DataFrame, good_temp: Dict[str, Dict[str, float]]
     weather['Max temp'] = pd.to_numeric(weather['Max temp'])
     weather['Min temp'] = pd.to_numeric(weather['Min temp'])
     weather['Avg temp'] = pd.to_numeric(weather['Avg temp'])
-    weather_stats = weather.drop(columns='Date').groupby(['Month', 'Day'], as_index=False).mean()
+    weather_stats = weather[['Month', 'Day', 'Max temp', 'Min temp', 'Avg temp']].groupby(['Month', 'Day'], as_index=False).mean()
     good_weather = weather_stats[
         (weather_stats['Min temp'] >= good_temp['min_temp'][culture]) &
         (weather_stats['Max temp'] <= good_temp['max_temp'][culture]) &
