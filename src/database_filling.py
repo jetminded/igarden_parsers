@@ -37,23 +37,23 @@ def connect_sqlalc():
 
 def run():
     engine = connect_sqlalc()
-    tomatoes = pd.read_csv('../aelita/ready/parsed_tomato_aelita.csv')
-    features = pd.read_csv('../technical_data/features_technical.csv')
-    culture_temp = pd.read_csv('../technical_data/culture_x_temp.csv')
+    # tomatoes = pd.read_csv('../aelita/ready/parsed_tomato_aelita.csv')
+    # features = pd.read_csv('../technical_data/features_technical.csv')
+    # culture_temp = pd.read_csv('../technical_data/culture_x_temp.csv')
     with engine.connect() as conn:
-        tomatoes.to_sql('temp_tomato_table', con=conn, if_exists='replace', index=False)
-        features.to_sql('features_technical', con=conn, if_exists='replace', index=True)
-        culture_temp.to_sql('culture_x_temperature', con=conn, if_exists='replace', index=True)
+    #    tomatoes.to_sql('temp_tomato_table', con=conn, if_exists='replace', index=False)
+    #    features.to_sql('features_technical', con=conn, if_exists='replace', index=True)
+    #    culture_temp.to_sql('culture_x_temperature', con=conn, if_exists='replace', index=True)
         conn.commit()
         conn.close()
 
-    path_to_weather = '../weather'
+    path_to_weather = 'city_x_weatherCity.csv'
     with engine.connect() as conn:
-        for filename in os.listdir(path_to_weather):
-            df = pd.read_csv(os.path.join(path_to_weather, filename))
-            df.to_sql('weather', con=conn, if_exists='append', index=True)
+        # for filename in os.listdir(path_to_weather):
+            df = pd.read_csv(path_to_weather)
+            df.to_sql('city_x_weather', con=conn, if_exists='append', index=True)
             conn.commit()
-            print(filename)
+            # print(filename)
 
 
 if __name__ == '__main__':

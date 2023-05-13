@@ -14,6 +14,8 @@ from sqlalchemy import text
 from definitions import ROOT_DIR, CALENDAR_DIR
 from src.database_filling import connect_sqlalc
 
+def find_closest_city(city, )
+
 
 def find_best_date(weather: pd.DataFrame, good_temp: Dict[str, Dict[str, float]], culture: str) -> datetime:
     weather['Date'] = pd.to_datetime(weather['Date'])
