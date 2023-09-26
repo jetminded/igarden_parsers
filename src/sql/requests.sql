@@ -46,8 +46,3 @@ VALUES (1, 'Томат', 'temp_tomato_table', True, True, 6.0, 0.0),
        (6, 'Перец', 'temp_perets_table', True, True, 7.0, 3.0);
 
 CREATE SCHEMA weather_schema;
-
-SELECT * FROM weather_schema."Актюбинск";
-
-SELECT * FROM city_x_weather
-WHERE weather = 'abobe';

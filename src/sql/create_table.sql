@@ -1,4 +1,4 @@
-CREATE TABLE USERS
+CREATE TABLE IF NOT EXISTS USERS
 (
     user_id INT PRIMARY KEY,
     salt VARCHAR(50) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE USERS
 -- JSON in Postgres cheat sheet
 -- https://postgrespro.ru/docs/postgresql/9.5/functions-json
 
-CREATE TABLE CULTURES
+CREATE TABLE IF NOT EXISTS CULTURES
 (
     culture_id int,
     culture_name VARCHAR(100),
@@ -33,10 +33,10 @@ CREATE TABLE CULTURES
     zone_max int
 );
 
-CREATE TYPE RIPENING_T AS ENUM ('type1', 'type2');
+CREATE TYPE IF NOT EXISTS RIPENING_T AS ENUM ('type1', 'type2');
 -- someone more qualified pls fix this
 
-CREATE TABLE VEGETABLES
+CREATE TABLE IF NOT EXISTS VEGETABLES
 (
     vegetable_id int, -- is it needed though?
     culture_id int,
@@ -54,11 +54,11 @@ CREATE TABLE VEGETABLES
     greenhouse BOOLEAN
 );
 
-CREATE TYPE BLOOMING_T AS ENUM ('type1', 'type2');
-CREATE TYPE COLOR_GROUP_T AS ENUM ('red', 'blue');
+CREATE TYPE IF NOT EXISTS BLOOMING_T AS ENUM ('type1', 'type2');
+CREATE TYPE IF NOT EXISTS COLOR_GROUP_T AS ENUM ('red', 'blue');
 -- someone more qualified pls fix this
 
-CREATE TABLE FLOWERS
+CREATE TABLE IF NOT EXISTS FLOWERS
 (
     flower_id int,
     culture_id int,
@@ -69,14 +69,14 @@ CREATE TABLE FLOWERS
     color VARCHAR(100) -- possibly RGB?
 );
 
-CREATE TABLE PHLOX_PAN
+CREATE TABLE IF NOT EXISTS PHLOX_PAN
 (
     phlox_id int,
     form VARCHAR(100), -- enum?
     flower_diam int
 );
 
-CREATE TABLE TOMATOES
+CREATE TABLE IF NOT EXISTS TOMATOES
 (
     tomato_id int,
     det VARCHAR(50),
@@ -85,3 +85,13 @@ CREATE TABLE TOMATOES
     cold BOOLEAN,
     hot BOOLEAN
 );
+
+INSERT INTO cultures(culture_id, culture_name, culture_table_name, is_vegetable, is_annual, air_temp, min_air_temp)
+VALUES (1, 'Томат', 'temp_tomato_table', True, True, 6.0, 0.0),
+       (2, 'Кабачок', 'temp_kabachok_table', True, True, 8.0, 5.0),
+       (3, 'Баклажан', 'temp_baklazhan_table', True, True, 8.0, 5.0),
+       (4, 'Дыня', 'temp_dynya_table', True, True, 13.0, 8.0),
+       (5, 'Арбуз', 'temp_arbuz_table', True, True, 13.0, 8.0),
+       (6, 'Перец', 'temp_perets_table', True, True, 7.0, 3.0);
+
+CREATE SCHEMA weather_schema;
