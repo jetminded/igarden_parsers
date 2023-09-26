@@ -44,3 +44,10 @@ VALUES (1, 'Томат', 'temp_tomato_table', True, True, 6.0, 0.0),
        (4, 'Дыня', 'temp_dynya_table', True, True, 13.0, 8.0),
        (5, 'Арбуз', 'temp_arbuz_table', True, True, 13.0, 8.0),
        (6, 'Перец', 'temp_perets_table', True, True, 7.0, 3.0);
+
+CREATE SCHEMA weather_schema;
+
+SELECT * FROM weather_schema."Актюбинск";
+
+SELECT * FROM city_x_weather
+WHERE weather = 'abobe';

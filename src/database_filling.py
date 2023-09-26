@@ -28,23 +28,20 @@ def connect_sqlalc():
             user=creds["PG_UN"],
             password=creds["PG_DB_PW"],
             db=creds["PG_DB_NAME"]
-        ))
+        ), future=True)
     except Exception as e:
         print(e)
         print('Connection Has Failed...')
     return engine
 
 
-def run():
-    engine = connect_sqlalc()
-
+def create_temp_tables_for_vegetables(engine):
     for file in os.listdir('../aelita/tech'):
         if file.split('_')[0] == 'parsed':
             culture = file.split('_')[1]
             data = pd.read_csv(os.path.join('../aelita/tech', file))
 
 
-    # tomatoes = pd.read_csv('../aelita/ready/parsed_tomato_aelita.csv')
             features = pd.read_csv('../technical_data/features_technical.csv')
             culture_temp = pd.read_csv('../technical_data/culture_x_temp.csv')
             with engine.connect() as conn:
@@ -52,15 +49,26 @@ def run():
                 features.to_sql('features_technical', con=conn, if_exists='replace', index=True)
                 culture_temp.to_sql('culture_x_temperature', con=conn, if_exists='replace', index=True)
                 conn.commit()
-                conn.close()
+                # conn.close()
 
-    # path_to_weather = 'city_x_weatherCity.csv'
-    # with engine.connect() as conn:
-        # for filename in os.listdir(path_to_weather):
+
+def create_tables_for_weather(engine):
+    path_to_weather = '../weather'
+    for filename in os.listdir(path_to_weather):
+        with engine.connect() as conn:
+            df = pd.read_csv(os.path.join(path_to_weather, filename))
+            df = df.drop(df[df['Avg temp'].str.len() > 5].index)
             # df = pd.read_csv(path_to_weather, names=['index', 'city', 'weather']) .drop(columns=['index'])
-            # df.to_sql('city_x_weather', con=conn, if_exists='replace', index=True)
-            # conn.commit()
-            # print(filename)
+            city = filename[:-4]
+            df.to_sql(f'{city.replace(" ", "_")}', con=conn, if_exists='replace', index=True)
+            conn.commit()
+            print(filename)
+            # conn.close()
+
+def run():
+    engine = connect_sqlalc()
+    create_temp_tables_for_vegetables(engine)
+    create_tables_for_weather(engine)
 
 
 if __name__ == '__main__':

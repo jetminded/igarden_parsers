@@ -11,11 +11,12 @@ import numpy as np
 import sqlalchemy.engine
 from numpy import NaN
 from sqlalchemy import text
+from time import time
 
 from database_filling import connect_sqlalc
 
-ROOT_DIR = os.path.dirname("/home/igarden/website/")
-CALENDAR_DIR =  'calendars_jsons'
+# ROOT_DIR = os.path.dirname("/home/igarden/website/")
+CALENDAR_DIR = '/home/igarden/igarden_git/igarden_parsers/src/flask_app/static/calendars_jsons'
 
 
 def find_best_date(weather: pd.DataFrame, good_temp: Dict[str, Dict[str, float]], culture: str) -> datetime:
@@ -25,7 +26,8 @@ def find_best_date(weather: pd.DataFrame, good_temp: Dict[str, Dict[str, float]]
     weather['Max temp'] = pd.to_numeric(weather['Max temp'])
     weather['Min temp'] = pd.to_numeric(weather['Min temp'])
     weather['Avg temp'] = pd.to_numeric(weather['Avg temp'])
-    weather_stats = weather[['Month', 'Day', 'Max temp', 'Min temp', 'Avg temp']].groupby(['Month', 'Day'], as_index=False).mean()
+    weather_stats = weather[['Month', 'Day', 'Max temp', 'Min temp', 'Avg temp']].groupby(['Month', 'Day'],
+                                                                                          as_index=False).mean()
     good_weather = weather_stats[
         (weather_stats['Min temp'] >= good_temp['min_temp'][culture]) &
         (weather_stats['Max temp'] <= good_temp['max_temp'][culture]) &
@@ -78,9 +80,11 @@ class CalendarBuilder:
         :param city: Город, для которого генерируется календарь.
         :return: Путь до файла, где лежит календарь в формате json
         """
-        new_city = pd.read_sql_query(select_query('city_x_weather', f'city_x_weather.city = \'{city}\''), con=self.conn)['weather'].item()
-        condition = f'weather.\"City\" = \'{new_city}\''
-        weather = pd.read_sql_query(select_query(self.weather_db_name, condition), con=self.conn, index_col='index')
+        new_city = \
+        pd.read_sql_query(select_query('city_x_weather', f'city_x_weather.city = \'{city}\''), con=self.conn)[
+            'weather'][0]
+        weather_db_name = 'weather_schema.\"' + new_city.replace(" ", "_") + '\"'
+        weather = pd.read_sql_query(select_query(weather_db_name), con=self.conn, index_col='index')
         culture_name = self.cultures_location[self.cultures_location.culture_name == culture].culture_table_name.item()
         culture_df = pd.read_sql_query(select_query(culture_name), con=self.conn)
 
@@ -91,6 +95,9 @@ class CalendarBuilder:
         file_name = get_instant_name(culture, city)
         with open(file_name, 'w') as f:
             json.dump(chores, f, default=str)
+
+        # this is awful im sorry
+        file_name = "calendars_jsons/" + file_name.split('/')[-1]
         return file_name
 
     def create_chores(self, culture: str, sort_info: Dict, weather: pd.DataFrame) -> List[Dict[str, Tuple[datetime]]]:
@@ -123,8 +130,10 @@ class CalendarBuilder:
 
         return chores
 
+
 if __name__ == '__main__':
     culture, sort, city = sys.argv[1], sys.argv[2], sys.argv[3]
+    start = time()
     engine = connect_sqlalc()
     builder = CalendarBuilder(
         'culture_x_temperature',
@@ -136,7 +145,6 @@ if __name__ == '__main__':
     print(builder.create_calendar(culture, sort, city))
     # print(builder.create_calendar('Томат', 'Томат Ранний красный', 'Брест'))
     # print(builder.create_calendar('Томат', 'Томат Брутус', 'Белые Столбы'))
-    # print(builder.create_calendar('Арбуз', 'Арбуз Белые росы', 'Белые Столбы'))
-    # 'Арбуз' 'Арбуз Белые росы' 'Белые Столбы'
-    # 'Томат' 'Томат Ранний красный' 'Брест'
+    # 'Томат' 'Томат Брутус' 'Белые Столбы'
     # for debug
+
