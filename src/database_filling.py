@@ -91,10 +91,10 @@ def create_tables_for_weather(engine):
 
 def run():
     engine = connect_sqlalc()
-    # create_everything(engine)
+    create_everything(engine)
     create_some_useful_tables(engine)
-    # create_temp_tables_for_vegetables(engine)
-    # create_tables_for_weather(engine)
+    create_temp_tables_for_vegetables(engine)
+    create_tables_for_weather(engine)
 
 
 if __name__ == '__main__':
